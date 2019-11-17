@@ -14,6 +14,7 @@ int timers[] = {100, 800};
 
 byte timers_num = sizeof(timers) / 2;
 byte LED[] = {11, 10, 9};
+#include <LowPower.h>
 byte fade_count;
 volatile byte mode;
 boolean cap_flag;
@@ -22,7 +23,7 @@ volatile unsigned long debounce_time;
 unsigned long last_fade, last_try;
 
 byte count, try_count;
-int wait_time[blinks], min_wait[blinks], max_wait[blinks];
+int wait_time[max_blinks], min_wait[max_blinks], max_wait[max_blinks];
 
 void setup() {
   Serial.begin(9600);
@@ -47,6 +48,8 @@ void setup() {
 
   if (butt_sens) attachInterrupt(0, threshold, FALLING);
   else attachInterrupt(0, threshold, RISING);
+
+  good_night();
 }
 
 void fade (int color, int bright) {
@@ -152,6 +155,10 @@ void loop() {
       }
     }
   }
+
+  if (millis() - debounce_time > 10000) {
+    good_night();
+  }
 }
 
 void threshold() {
@@ -161,4 +168,10 @@ void threshold() {
     threshold_flag = 1;
     debonce_flag = 0;
   }
+}
+
+void good_night() {
+  if (debug) Serial.println("good night");
+  delay(5);
+  LowPower.powerDown(SLEEP_FOREVER, ADC_OFF, BOD_OFF);
 }
