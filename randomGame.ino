@@ -1,4 +1,6 @@
-#define blinks 5
+#define difficulty 100
+#define min_blinks 3
+#define max_blinks 6
 
 int timers[] = {100, 800};
 
@@ -76,15 +78,16 @@ void loop() {
   }
 
   if (mode == 1) {                                
-    randomSeed(millis());      
-    for (byte i = 0; i < blinks; i++) {            
+    randomSeed(millis());                         
+    count = random(min_blinks, max_blinks);       
+    for (byte i = 0; i < count; i++) {            
       byte rnd = random(0, timers_num);           
       wait_time[i] = timers[rnd];                 
-      min_wait[i] = wait_time[i];    
-      max_wait[i] = wait_time[i];
+      min_wait[i] = wait_time[i] - difficulty;    
+      max_wait[i] = wait_time[i] + difficulty;    
     }
 
-    for (byte i = 0; i < blinks; i++) {
+    for (byte i = 0; i < count; i++) {
       fade(2, 30);
       delay(wait_time[i]);               
       if (debug) Serial.println(wait_time[i]);
